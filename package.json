@@ -21,6 +21,9 @@
   "homepage": "https://github.com/nugrohoac/Code_ProtalHarga#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "jsonwebtoken": "^7.3.0",
+    "mongoose": "^4.8.6",
+    "mongoose-auto-increment": "^5.0.1"
   }
 }

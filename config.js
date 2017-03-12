@@ -1,3 +1,4 @@
 module.exports = {
-  'connect':'mongodb://localhost/PortalHarga'
+    'connect':'mongodb://localhost/PortalHarga',
+    'secretKey':'bismillah'
 };

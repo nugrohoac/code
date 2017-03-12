@@ -14,7 +14,7 @@ var getAllUser=function(req,res){
 
 var addUser=function(req,res){
   var newUser=new users(req.body);
-  if(req.body.name=="" || req.body.username=="" || req.body.password=="" || req.body.email==""){
+  if(req.body.idUser=="" || req.body.name=="" || req.body.username=="" || req.body.password=="" || req.body.email==""){
     res.json({"status":"400","message":"UnClompetely"});
   }else{
     newUser.save(function(err){
@@ -28,7 +28,60 @@ var addUser=function(req,res){
   }
 };
 
+var updateUser=function(req,res){
+  users.findOne({idUser:req.body.idUser},function(err,user){
+    if(!user){
+      res.json({"status":"404","message":"user not founded"})
+    }else {
+      user.name=req.body.name;
+      user.username=req.body.username;
+      user.password=req.body.password;
+      user.email=req.body.email;
+      user.save(function(err){
+        if(err){
+          res.json({"status":"404","message":"failed updateUser"});
+        }else {
+          res.status(500);
+          res.send(user);
+        }
+      });
+    }
+  });
+};
+
+var deleteUser=function(req,res){
+  users.findOne({idUser:req.params.idUser},function(err,user){
+    console.log(req.params.idUser);
+    if(!user){
+      res.json({"satus":"Not Founded User"});
+    }else {
+      user.remove(function(err){
+        if(err){
+          res.json({"status":"404","message":"can't deleteUser"});
+        }else {
+          res.json({"message":"success delete user"})
+        }
+      });
+    }
+  });
+};
+
+var findUser=function(req,res){
+  users.findOne({idUser:req.params.idUser},function(err,user){
+    console.log(req.params.idUser);
+    if(!user){
+      res.json({"message":"can't find user"})
+    }else {
+      res.status(500);
+      res.send(user)
+    }
+  });
+};
+
 module.exports={
   getAllUser:getAllUser,
-  addUser:addUser
+  addUser:addUser,
+  updateUser:updateUser,
+  deleteUser:deleteUser,
+  findUser:findUser
 };
