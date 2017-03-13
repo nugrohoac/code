@@ -1,5 +1,7 @@
 var users=require('./../models/userModel');
 var crypto = require('crypto');
+var config=require('./../config');
+var jwt = require('jsonwebtoken');
 
 var getAllUser=function(req,res){
   users.find(function(err,allUser){
@@ -25,10 +27,17 @@ var addUser=function(req,res){
 			  newUser.password = crypto.createHash('md5').update(req.body.password, 'ut-8').digest('hex') ;
 			  newUser.save(function(err){
 				  if(err){
+					console.log(newUser);
         			res.json({"status":"404","message":"can't save"})
 				  }else {
+					  var token = jwt.sign(newUser,config.secretKey,{
+						  expiresIn:60*60
+					  })
 					  res.status(201);
-					  res.send(newUser);
+					  res.json({
+						  newUser,
+						  token:token
+					  })
 				  }
 			  });
 		  }

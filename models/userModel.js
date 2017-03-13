@@ -7,7 +7,7 @@ var connection = mongoose.createConnection("mongodb://localhost/PortalHarga");
 autoIncrement.initialize(connection);
 
 var userModel=new Schema({
-  name:{type:String, unique:true},
+  name:String,
   username:String,
   password:String,
   email:String
