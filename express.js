@@ -20,6 +20,7 @@ var userRouter=require('./routes/userRouter');
 var auth=require('./routes/authRouter');
 var secureRouter=require('./routes/secureRouter');
 var increment=require('./routes/increment');
+var login=require('./routes/loginRouter');
 
 app.listen(5000,function(){
   console.log("running on port 5000");
@@ -32,3 +33,6 @@ app.use('/auth',auth);
 app.use('/secure',secureRouter);
 
 app.use('/incre',increment);
+
+//buat login
+app.use('/login',login);

@@ -1,4 +1,5 @@
 var users=require('./../models/userModel');
+var crypto = require('crypto');
 
 var getAllUser=function(req,res){
   users.find(function(err,allUser){
@@ -13,18 +14,25 @@ var getAllUser=function(req,res){
 };
 
 var addUser=function(req,res){
-  var newUser=new users(req.body);
-  if(req.body.idUser=="" || req.body.name=="" || req.body.username=="" || req.body.password=="" || req.body.email==""){
+	var newUser=new users(req.body);
+  if(req.body.name=="" || req.body.username=="" || req.body.password=="" || req.body.email==""){
     res.json({"status":"400","message":"UnClompetely"});
   }else{
-    newUser.save(function(err){
-      if(err){
-        res.json({"status":"404","message":"can't save"})
-      }else {
-        res.status(201);
-        res.send(newUser);
-      }
-    });
+	  users.findOne({username:req.body.username},function(err,user){
+		  if(user){
+			  res.json({"message":"username sudah ada"});
+		  }else{
+			  newUser.password = crypto.createHash('md5').update(req.body.password, 'ut-8').digest('hex') ;
+			  newUser.save(function(err){
+				  if(err){
+        			res.json({"status":"404","message":"can't save"})
+				  }else {
+					  res.status(201);
+					  res.send(newUser);
+				  }
+			  });
+		  }
+	  });
   }
 };
 
