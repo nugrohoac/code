@@ -4,15 +4,27 @@ var config=require('./../config');
 var jwt = require('jsonwebtoken');
 
 var getAllUser=function(req,res){
-  users.find(function(err,allUser){
-    if(err){
-      res.status(500);
-      res.send("Internal server error");
-      res.status(200);
-    }else{
-      res.send(allUser);
-    }
-  });
+	var token = req.body.token || req.headers.token;
+	if(!token){
+		res.json({"status":"400","message":"token tidak ada"});
+	}else{
+		var token = req.body.token || req.headers.token;
+		jwt.verify(token,config.secretKey,function(err,decode){
+			if(err){
+				res.status(500).send("Invalid token");
+			}else{
+				users.find(function(err,allUser){
+					if(err){
+						res.status(500);
+						res.send("Internal server error");
+						res.status(200);
+					}else{
+						res.send(allUser);
+					}
+				});
+			}
+		});
+	}
 };
 
 var addUser=function(req,res){
@@ -46,53 +58,87 @@ var addUser=function(req,res){
 };
 
 var updateUser=function(req,res){
-  users.findOne({idUser:req.body.idUser},function(err,user){
-    if(!user){
-      res.json({"status":"404","message":"user not founded"})
-    }else {
-      user.name=req.body.name;
-      user.username=req.body.username;
-      user.password=req.body.password;
-      user.email=req.body.email;
-      user.save(function(err){
-        if(err){
-          res.json({"status":"404","message":"failed updateUser"});
-        }else {
-          res.status(500);
-          res.send(user);
-        }
-      });
-    }
-  });
+	var token = req.body.token || req.headers.token;
+	if(!token){
+		res.json({"status":"400","message":"token tidak ada"});
+	}
+	else{
+		jwt.verify(token,config.secretKey,function(err,decode){
+			if(err){
+				res.status(500).send("Invalid token");
+			}else{
+				users.findOne({userId:req.body.userId},function(err,user){
+					if(!user){
+						res.json({"status":"404","message":"user not founded"})
+					}else {
+						user.name=req.body.name;
+						user.username=req.body.username;
+						user.password=crypto.createHash('md5').update(req.body.password, 'ut-8').digest('hex');
+						user.email=req.body.email;
+						user.save(function(err){
+							if(err){
+								res.json({"status":"404","message":"failed updateUser"});
+							}else {
+								res.status(500);
+								res.send(user);
+							}
+						});
+					}
+				});
+			}
+		})
+	}
 };
 
 var deleteUser=function(req,res){
-  users.findOne({idUser:req.params.idUser},function(err,user){
-    console.log(req.params.idUser);
-    if(!user){
-      res.json({"satus":"Not Founded User"});
-    }else {
-      user.remove(function(err){
-        if(err){
-          res.json({"status":"404","message":"can't deleteUser"});
-        }else {
-          res.json({"message":"success delete user"})
-        }
-      });
-    }
-  });
+	var token = req.body.token || req.headers.token;
+	if(!token){
+		res.json({"status":"400","message":"token tidak ada"});
+	}else{
+		jwt.verify(token,config.secretKey,function(err,decode){
+			if(err){
+				res.status(500).send("Invalid token");
+			}else{
+				users.findOne({userId:req.params.userId},function(err,user){
+				console.log(req.params.userId);
+					if(!user){
+				  		res.json({"satus":"Not Founded User"});
+					}else {
+						user.remove(function(err){
+							if(err){
+					  			res.json({"status":"404","message":"can't deleteUser"});
+							}else {
+					  			res.json({"message":"success delete user"});
+							}
+						});
+					}
+				});
+			}
+		});
+	}
 };
 
 var findUser=function(req,res){
-  users.findOne({idUser:req.params.idUser},function(err,user){
-    console.log(req.params.idUser);
-    if(!user){
-      res.json({"message":"can't find user"})
-    }else {
-      res.status(500);
-      res.send(user)
-    }
-  });
+	var token = req.body.token || req.headers.token;
+	if(!token){
+		res.json({"status":"400","message":"token tidak ada"});
+	}else{
+		jwt.verify(token,config.secretKey,function(err,decode){
+			if(err){
+				res.status(500).send("Invalid token");
+			}else{
+				users.findOne({userId:req.params.userId},function(err,user){
+					console.log(req.params.userId);
+					if(!user){
+						res.json({"message":"can't find user"});
+					}else {
+						res.status(500);
+			  			res.send(user);
+					}
+				});
+			}
+		});
+	}
 };
 
 module.exports={

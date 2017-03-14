@@ -2,9 +2,9 @@ var jwt = require('jsonwebtoken');
 var config=require('./../config');
  
 var auth=function(req,res){
+	var encrip ="qwerty";
     var user={
-        username:'test',
-        email:'test@test.com'
+        i:"ghghfghfghgfhfg1"
     }
     var token=jwt.sign(user, config.secretKey,{
         expiresIn:4000
